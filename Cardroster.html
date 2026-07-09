@@ -1,0 +1,1275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Card Roster · Adrenalyn XL WC26</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
+<style>
+  :root{
+    --bg:#0A0A0C;
+    --surface:#141417;
+    --surface-2:#1B1B20;
+    --surface-3:#222227;
+    --line: rgba(255,255,255,0.09);
+    --line-strong: rgba(255,255,255,0.18);
+    --text:#F5F5F7;
+    --text-dim: rgba(245,245,247,0.56);
+    --text-faint: rgba(245,245,247,0.34);
+
+    --blue:#2E6BFF;
+    --green:#17C964;
+    --gold:#FFB020;
+    --pink:#FF3D8A;
+    --red:#FF3B3B;
+  }
+  [data-theme="light"]{
+    --bg:#F5F5F7; --surface:#FFFFFF; --surface-2:#F0F0F2; --surface-3:#E8E8EB;
+    --line: rgba(10,10,12,0.09); --line-strong: rgba(10,10,12,0.18);
+    --text:#0A0A0C; --text-dim: rgba(10,10,12,0.56); --text-faint: rgba(10,10,12,0.36);
+  }
+  body{ transition: background-color 0.2s, color 0.2s; }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding-bottom:100px;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px;}
+  ::selection{background:var(--pink); color:#0A0A0C;}
+
+  /* ---- Top nav ---- */
+  nav{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:22px 0 18px; border-bottom:1px solid var(--line);
+  }
+  .brand{display:flex; align-items:center; gap:9px;}
+  .brand .dot{width:9px; height:9px; border-radius:50%; background:linear-gradient(135deg,var(--blue),var(--pink));}
+  .brand span{font-family:'Instrument Serif', serif; font-style:italic; font-size:20px; letter-spacing:0.01em;}
+  .tabs{display:flex; gap:2px; background:var(--surface); border-radius:10px; padding:3px; border:1px solid var(--line);}
+  .tabs button{
+    background:transparent; border:none; color:var(--text-dim); font-family:'Inter',sans-serif;
+    font-size:13.5px; font-weight:600; padding:8px 16px; border-radius:8px; cursor:pointer;
+  }
+  .tabs button.active{background:var(--surface-3); color:var(--text);}
+
+  /* ---- Hero ---- */
+  .hero{padding:40px 0 28px;}
+  .hero .eyebrow{
+    font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--text-faint); margin:0 0 10px;
+  }
+  .hero .amount{
+    font-family:'Instrument Serif', serif; font-style:italic; font-weight:400;
+    font-size:clamp(46px, 9vw, 84px); line-height:0.98; margin:0;
+    background:linear-gradient(100deg, var(--blue) 0%, var(--pink) 55%, var(--gold) 100%);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    letter-spacing:-0.01em;
+  }
+  .hero .amount sup{
+    font-family:'IBM Plex Mono',monospace; font-style:normal; font-size:16px; color:var(--text-dim);
+    -webkit-text-fill-color:var(--text-dim);
+    vertical-align:super; margin-left:8px;
+  }
+  .hero-sub{display:flex; align-items:center; gap:18px; margin-top:14px; flex-wrap:wrap;}
+  .hero-sub .stat{font-family:'IBM Plex Mono',monospace; font-size:13px; color:var(--text-dim);}
+  .hero-sub .stat b{color:var(--text); font-weight:600;}
+  .hero-sub .divider{width:1px; height:14px; background:var(--line-strong);}
+
+  .segbar{display:flex; height:7px; border-radius:20px; overflow:hidden; margin-top:20px; background:var(--surface);}
+  .segbar span{height:100%;}
+
+  .target-edit{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:'IBM Plex Mono',monospace; font-size:12px; color:var(--text-faint);
+  }
+  .target-edit input{
+    width:52px; background:transparent; border:none; border-bottom:1px solid var(--line-strong);
+    color:var(--text-dim); font-family:'IBM Plex Mono',monospace; font-size:12px; padding:1px 2px;
+  }
+  .target-edit input:focus{outline:none; border-color:var(--pink);}
+
+  /* ---- Toolbar ---- */
+  .toolbar{display:flex; gap:9px; margin:26px 0 18px; flex-wrap:wrap; align-items:center;}
+  .search{
+    flex:1; min-width:160px;
+    background:var(--surface); border:1px solid var(--line); border-radius:9px;
+    padding:11px 13px; color:var(--text); font-size:14px; font-family:'Inter',sans-serif;
+  }
+  .search::placeholder{color:var(--text-faint);}
+  .search:focus{outline:none; border-color:var(--line-strong);}
+  select.sortsel{
+    background:var(--surface); border:1px solid var(--line); border-radius:9px;
+    color:var(--text-dim); font-size:13px; padding:11px 10px; font-family:'Inter',sans-serif;
+  }
+  button{font-family:'Inter',sans-serif; cursor:pointer;}
+  .btn-primary{
+    background:var(--text); color:var(--bg); border:none; border-radius:9px;
+    padding:11px 17px; font-size:13.5px; font-weight:700;
+  }
+  .btn-primary:hover{opacity:0.86;}
+  .btn-accent{
+    background:var(--pink); color:#0A0A0C; border:none; border-radius:9px;
+    padding:11px 17px; font-size:13.5px; font-weight:700;
+  }
+  .btn-accent:hover{opacity:0.86;}
+  .btn-ghost{
+    background:transparent; border:1px solid var(--line); color:var(--text-dim);
+    border-radius:9px; padding:11px 15px; font-size:13px; font-weight:500;
+  }
+  .btn-ghost:hover{color:var(--text); border-color:var(--line-strong);}
+  .btn-danger{
+    background:transparent; border:1px solid rgba(255,59,59,0.4); color:var(--red);
+    border-radius:9px; padding:11px 15px; font-size:13px; font-weight:600;
+  }
+  .btn-danger:hover{background:rgba(255,59,59,0.1);}
+
+  .view-toggle{display:flex; border:1px solid var(--line); border-radius:9px; overflow:hidden;}
+  .view-toggle button{background:var(--surface); color:var(--text-faint); border:none; padding:11px 13px; font-size:14px;}
+  .view-toggle button.active{background:var(--surface-3); color:var(--text);}
+
+  /* ---- Panels (scan) ---- */
+  .panel{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:20px; margin-bottom:20px; display:none;
+  }
+  .panel.open{display:block;}
+  .panel-title{font-size:13px; color:var(--text-dim); margin:0 0 16px; line-height:1.55;}
+  .field label{
+    display:block; font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase;
+    color:var(--text-faint); margin-bottom:5px; font-weight:600;
+  }
+  .field input, .field select{
+    width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:8px;
+    color:var(--text); padding:10px 11px; font-size:14px; font-family:'Inter',sans-serif;
+  }
+  .field input:focus, .field select:focus{outline:none; border-color:var(--line-strong);}
+  .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:12px;}
+  .form-grid .full{grid-column:1/-1;}
+  .panel-actions{display:flex; gap:8px; margin-top:16px; justify-content:flex-end;}
+
+  #scan-input{
+    width:100%; background:var(--surface-2); border:1px dashed var(--line-strong); border-radius:9px;
+    color:var(--text-dim); padding:16px; font-size:13px; font-family:'Inter',sans-serif;
+  }
+  .crop-stage{margin-top:14px;}
+  .crop-wrap{max-width:440px; max-height:440px; overflow:hidden; border-radius:10px; border:1px solid var(--line);}
+  .crop-wrap img{display:block; max-width:100%;}
+  .crop-actions{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
+  .redo-crop{font-size:12px; color:var(--pink); background:none; border:none; padding:0; margin-top:10px; text-decoration:underline; cursor:pointer;}
+  #scan-preview-wrap{margin-top:14px;}
+  .checker{
+    background-image:
+      linear-gradient(45deg, #222227 25%, transparent 25%),
+      linear-gradient(-45deg, #222227 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, #222227 75%),
+      linear-gradient(-45deg, transparent 75%, #222227 75%);
+    background-size:16px 16px;
+    background-position:0 0, 0 8px, 8px -8px, -8px 0px;
+    background-color:var(--surface-2);
+    border-radius:9px; border:1px solid var(--line);
+    display:inline-block;
+  }
+  .bg-remove-panel{margin-top:16px; padding-top:16px; border-top:1px solid var(--line);}
+  .bg-remove-row{display:flex; align-items:center; gap:10px; margin-bottom:10px; flex-wrap:wrap;}
+  .bg-remove-row label{font-size:12px; color:var(--text-dim);}
+  .bg-remove-row input[type=range]{accent-color:var(--pink); flex:1; min-width:120px;}
+  .bg-remove-toggle{display:flex; align-items:center; gap:7px; font-size:12.5px; color:var(--text-dim);}
+  .scan-status{font-size:12.5px; color:var(--text-dim); font-family:'IBM Plex Mono',monospace;}
+  .scan-status.err{color:var(--red);}
+  .scan-status.ok{color:var(--green);}
+  .spinner{
+    display:inline-block; width:12px; height:12px; border:2px solid var(--line);
+    border-top-color:var(--pink); border-radius:50%; animation:spin 0.7s linear infinite; margin-right:6px; vertical-align:-2px;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+
+  /* ---- List / rows ---- */
+  .list{display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  .row{
+    display:grid;
+    grid-template-columns:16px 56px 1fr auto;
+    align-items:center;
+    gap:14px;
+    background:var(--surface);
+    padding:13px 16px;
+    cursor:pointer;
+  }
+  .row:hover{background:var(--surface-2);}
+  .tier-dot{width:9px; height:9px; border-radius:50%; background:var(--tier-color, var(--blue));}
+  .row .num{font-family:'IBM Plex Mono',monospace; font-size:12.5px; color:var(--text-faint);}
+  .row .info .player{font-size:14.5px; font-weight:600; color:var(--text);}
+  .row .info .meta{font-size:11.5px; color:var(--text-faint); margin-top:2px;}
+  .row .value-block{text-align:right;}
+  .row .value-block .val{font-family:'IBM Plex Mono',monospace; font-size:14.5px; color:var(--text); font-weight:600;}
+  .row .value-block .qty{font-size:10.5px; color:var(--text-faint);}
+
+  .empty{
+    text-align:center; padding:60px 20px; color:var(--text-dim);
+    border:1px dashed var(--line); border-radius:14px; font-size:14px;
+  }
+  .empty b{color:var(--text); font-style:italic; font-family:'Instrument Serif',serif; font-size:22px; display:block; margin-bottom:8px;}
+
+  /* ---- Album grid ---- */
+  .album{display:grid; grid-template-columns:repeat(auto-fill, minmax(136px, 1fr)); gap:12px;}
+  .album-tile{
+    background:var(--surface); border:1px solid var(--line); border-radius:12px; overflow:hidden;
+    cursor:pointer; border-top:3px solid var(--tier-color, var(--blue));
+  }
+  .album-tile:hover{border-color:var(--line-strong);}
+  .album-tile .thumb{width:100%; aspect-ratio:3/4; display:flex; align-items:center; justify-content:center; background:var(--surface-2); overflow:hidden;}
+  .album-tile .thumb img{width:100%; height:100%; object-fit:contain;}
+  .album-tile .thumb .placeholder{font-family:'IBM Plex Mono',monospace; font-size:11px; color:var(--text-faint); text-align:center;}
+  .album-tile .cap{padding:9px 10px;}
+  .album-tile .cap .player{font-size:12.5px; font-weight:600; color:var(--text); line-height:1.25;}
+  .album-tile .cap .meta{font-size:10.5px; color:var(--text-faint); margin-top:2px;}
+
+  /* ---- Tracker table ---- */
+  .tracker-list{display:flex; flex-direction:column; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:12px; overflow:hidden;}
+  .tracker-row{
+    display:grid; grid-template-columns:10px 1fr auto; align-items:center; gap:12px;
+    background:var(--surface); padding:11px 16px;
+  }
+  .tracker-row .name{font-size:13.5px; color:var(--text);}
+  .tracker-row .name small{color:var(--text-faint); font-weight:400;}
+  .tracker-row .amt{font-family:'IBM Plex Mono',monospace; font-size:13.5px; color:var(--text); font-weight:600;}
+
+  /* ---- Modal (card detail / edit) ---- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(6,6,7,0.72); backdrop-filter:blur(6px);
+    display:none; align-items:flex-start; justify-content:center; z-index:50; padding:40px 16px; overflow-y:auto;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal{
+    background:var(--surface); border:1px solid var(--line-strong); border-radius:16px;
+    max-width:520px; width:100%; overflow:hidden;
+  }
+  .modal-top{
+    display:flex; justify-content:space-between; align-items:center; padding:16px 18px;
+    border-bottom:1px solid var(--line);
+  }
+  .modal-top-label{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint);}
+  .modal-close{
+    background:transparent; border:1px solid var(--line); color:var(--text-dim);
+    width:30px; height:30px; border-radius:8px; font-size:14px;
+  }
+  .modal-close:hover{color:var(--text); border-color:var(--line-strong);}
+  .modal-image{
+    width:100%; aspect-ratio:16/10; display:flex; align-items:center; justify-content:center;
+    background:var(--surface-2); border-bottom:3px solid var(--tier-color, var(--blue));
+  }
+  .modal-image img{max-width:70%; max-height:100%; object-fit:contain;}
+  .modal-image .placeholder{font-family:'IBM Plex Mono',monospace; color:var(--text-faint); font-size:13px;}
+  .modal-body{padding:20px;}
+  .modal-actions{display:flex; gap:8px; padding:0 20px 20px; justify-content:space-between; align-items:center;}
+
+  footer{max-width:960px; margin:32px auto 0; padding:0 20px; color:var(--text-faint); font-size:11.5px; text-align:center;}
+
+  @media (max-width:600px){
+    .hero .amount{font-size:52px;}
+    .form-grid{grid-template-columns:1fr;}
+    .row{grid-template-columns:12px 40px 1fr; row-gap:6px;}
+    .row .value-block{grid-column:1/-1; display:flex; gap:10px; align-items:baseline; text-align:left; padding-left:52px;}
+    nav{flex-direction:column; align-items:flex-start; gap:14px;}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav>
+    <div class="brand"><span class="dot"></span><span>Card Roster</span></div>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <div class="tabs">
+        <button id="tab-collection" class="active">Colección</button>
+        <button id="tab-tracker">Tracker</button>
+      </div>
+      <button class="btn-ghost" id="theme-toggle-btn" title="Modo claro/oscuro" style="width:36px; height:36px; padding:0; display:flex; align-items:center; justify-content:center; font-size:15px;">🌙</button>
+      <button id="nav-avatar-btn" title="Perfil" style="width:36px; height:36px; border-radius:50%; overflow:hidden; background:var(--surface-2); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; padding:0; cursor:pointer; flex-shrink:0;">
+        <span id="nav-avatar-initials" style="font-family:'Instrument Serif',serif; font-style:italic; font-size:14px; color:var(--text-dim);">?</span>
+        <img id="nav-avatar-img" style="display:none; width:100%; height:100%; object-fit:cover;">
+      </button>
+    </div>
+  </nav>
+
+  <section id="view-collection">
+    <div class="hero">
+      <p class="eyebrow">Valor total de tu colección</p>
+      <h1 class="amount" id="hero-value">$0<sup id="cur-label">MXN</sup></h1>
+      <div class="hero-sub">
+        <span class="stat"><b id="stat-owned">0</b> / <span class="target-edit"><input type="number" id="target-input" value="859"></span> cartas únicas</span>
+        <div class="divider"></div>
+        <span class="stat"><b id="stat-total">0</b> piezas totales</span>
+      </div>
+      <div class="segbar" id="segbar"></div>
+    </div>
+
+    <div class="toolbar">
+      <input class="search" id="search" placeholder="Buscar por jugador, equipo o número…">
+      <select class="sortsel" id="sort">
+        <option value="added">Recién agregadas</option>
+        <option value="value">Mayor valor</option>
+        <option value="player">Jugador (A–Z)</option>
+        <option value="num">Número de carta</option>
+        <option value="tier">Nivel / rareza</option>
+      </select>
+      <button class="btn-ghost" id="currency-toggle">USD ⇄ MXN</button>
+      <button class="btn-ghost" id="export-btn">CSV</button>
+      <div class="view-toggle">
+        <button id="view-list" class="active">☰</button>
+        <button id="view-album">▦</button>
+      </div>
+      <button class="btn-accent" id="scan-toggle">📷 Escanear</button>
+      <button class="btn-primary" id="add-toggle">+ Agregar</button>
+    </div>
+
+    <div class="panel" id="scan-panel">
+      <p class="panel-title">Sube una foto de la carta. Primero la recortas, luego la IA intenta leer jugador, equipo, número y nivel, con un rango de valor estimado como punto de partida — siempre confirma en SportsCardsPro, CardPulse o Coleka antes de darlo por bueno.</p>
+      <input type="file" id="scan-input" accept="image/*" capture="environment">
+
+      <div class="crop-stage" id="crop-stage" style="display:none;">
+        <div class="crop-wrap"><img id="crop-target"></div>
+        <div class="crop-actions">
+          <button class="btn-primary" id="crop-apply">✓ Recortar</button>
+          <button class="btn-ghost" id="crop-skip">Usar foto completa</button>
+        </div>
+      </div>
+
+      <div id="scan-preview-wrap"></div>
+      <button class="redo-crop" id="redo-crop" style="display:none;">Recortar de nuevo</button>
+
+      <div class="bg-remove-panel" id="bg-remove-panel" style="display:none;">
+        <div class="bg-remove-row">
+          <label class="bg-remove-toggle"><input type="checkbox" id="bg-remove-enable"> Quitar fondo restante</label>
+          <label>Sensibilidad</label>
+          <input type="range" id="bg-remove-threshold" min="8" max="60" value="24" disabled>
+        </div>
+        <p style="font-size:11px; color:var(--text-faint); margin:0 0 4px;">Opcional — si ya recortaste bien la carta, probablemente no lo necesites.</p>
+      </div>
+
+      <div class="panel-actions" style="justify-content:space-between; align-items:center;">
+        <span id="scan-status" class="scan-status"></span>
+        <div style="display:flex; gap:8px;">
+          <button class="btn-ghost" id="scan-cancel">Cancelar</button>
+          <button class="btn-ghost" id="scan-skip-ai" disabled>Usar sin IA</button>
+          <button class="btn-accent" id="scan-analyze" disabled>Analizar carta</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="list" id="list"></div>
+    <div class="album" id="album" style="display:none;"></div>
+  </section>
+
+  <section id="view-tracker" style="display:none;">
+    <div class="hero">
+      <p class="eyebrow">Valor total de tu colección</p>
+      <h1 class="amount" id="hero-value-2">$0<sup>MXN</sup></h1>
+      <div class="segbar" id="segbar-2"></div>
+    </div>
+    <div class="tracker-list" id="tracker-list"></div>
+  </section>
+</div>
+
+<footer>Los valores son los que tú ingresas — consúltalos en SportsCardsPro, CardPulse o Coleka y actualízalos aquí. Datos guardados solo en tu cuenta.</footer>
+
+<!-- ---- Detail / edit modal ---- -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-top">
+      <span class="modal-top-label" id="modal-label">Nueva carta</span>
+      <button class="modal-close" id="modal-close">✕</button>
+    </div>
+    <div class="modal-image" id="modal-image"><span class="placeholder">sin foto</span></div>
+
+    <!-- VIEW MODE: read-only preview -->
+    <div id="view-mode-body" style="display:none;">
+      <div style="padding:22px 20px 4px;">
+        <h2 id="view-player" style="font-family:'Instrument Serif',serif; font-style:italic; font-weight:400; font-size:30px; margin:0 0 8px;"></h2>
+        <span id="view-tier-badge" style="display:inline-block; font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.05em; text-transform:uppercase; padding:3px 9px; border-radius:20px; background:rgba(255,255,255,0.08);"></span>
+      </div>
+      <div style="padding:18px 20px; display:grid; grid-template-columns:1fr 1fr; gap:14px 20px;">
+        <div><div style="font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px; font-weight:600;">Equipo</div><div id="view-team" style="font-size:14px;"></div></div>
+        <div><div style="font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px; font-weight:600;">Número</div><div id="view-num" style="font-family:'IBM Plex Mono',monospace; font-size:14px;"></div></div>
+        <div><div style="font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px; font-weight:600;">Condición</div><div id="view-cond" style="font-size:14px;"></div></div>
+        <div><div style="font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px; font-weight:600;">Cantidad</div><div id="view-qty" style="font-size:14px;"></div></div>
+        <div style="grid-column:1/-1;">
+          <div style="font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px; font-weight:600;">Valor</div>
+          <div id="view-value" style="font-family:'IBM Plex Mono',monospace; font-size:22px; font-weight:600;"></div>
+        </div>
+        <div class="full" style="grid-column:1/-1;" id="view-notes-wrap">
+          <div style="font-size:10.5px; letter-spacing:0.07em; text-transform:uppercase; color:var(--text-faint); margin-bottom:4px; font-weight:600;">Notas</div>
+          <div id="view-notes" style="font-size:13px; color:var(--text-dim); line-height:1.5;"></div>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-danger" id="view-delete">Eliminar</button>
+        <div style="display:flex; gap:8px; margin-left:auto;">
+          <button class="btn-ghost" id="view-close">Cerrar</button>
+          <button class="btn-primary" id="view-edit">Editar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIT MODE: editable form -->
+    <div id="edit-mode-body">
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="field"><label>Número</label><input id="f-num" placeholder="ej. 214"></div>
+        <div class="field"><label>Jugador</label><input id="f-player" placeholder="ej. L. Messi"></div>
+        <div class="field">
+          <label>Equipo</label>
+          <input id="f-team" list="team-list" placeholder="ej. Argentina">
+          <datalist id="team-list"></datalist>
+        </div>
+        <div class="field">
+          <label>Nivel / rareza</label>
+          <select id="f-tier">
+            <option value="Base">Base</option>
+            <option value="Team Logo">Team Logo</option>
+            <option value="Contender">Contender</option>
+            <option value="Fans' Favourite">Fans' Favourite</option>
+            <option value="Master Rookie">Master Rookie</option>
+            <option value="Icon">Icon</option>
+            <option value="Golden Baller">Golden Baller</option>
+            <option value="Limited Edition">Limited Edition</option>
+            <option value="Eternos 22">Eternos 22</option>
+            <option value="Otro">Otro</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Condición</label>
+          <select id="f-cond">
+            <option value="Mint">Mint</option>
+            <option value="NM">Near Mint</option>
+            <option value="EX">Excelente</option>
+            <option value="Jugada">Jugada / con uso</option>
+          </select>
+        </div>
+        <div class="field"><label>Cantidad</label><input id="f-qty" type="number" min="1" value="1"></div>
+        <div class="field"><label>Valor por pieza (MXN)</label><input id="f-value" type="number" min="0" step="0.01" placeholder="0.00"></div>
+        <div class="field full"><label>Notas</label><input id="f-notes" placeholder="ej. para intercambio con Lázaro"></div>
+      </div>
+      <p id="ai-disclaimer" style="display:none; font-size:12px; color:var(--gold); margin:14px 0 0; font-family:'IBM Plex Mono',monospace;">⚡ Prellenado por IA a partir de tu foto — revisa cada campo, especialmente el valor, antes de guardar.</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-danger" id="modal-delete" style="display:none;">Eliminar</button>
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn-ghost" id="modal-cancel">Cancelar</button>
+        <button class="btn-primary" id="modal-save">Guardar carta</button>
+      </div>
+    </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ---- Profile modal (local only — no login in this preview) ---- -->
+<div class="modal-overlay" id="profile-modal-overlay">
+  <div class="modal" style="max-width:380px;">
+    <div class="modal-top">
+      <span class="modal-top-label">Perfil</span>
+      <button class="modal-close" id="profile-modal-close">✕</button>
+    </div>
+    <div style="padding:24px 20px 4px; display:flex; justify-content:center;">
+      <div id="profile-avatar-circle" style="width:76px; height:76px; border-radius:50%; overflow:hidden; background:var(--surface-2); border:1px solid var(--line); display:flex; align-items:center; justify-content:center; position:relative; cursor:pointer;">
+        <span id="profile-avatar-initials" style="font-family:'Instrument Serif',serif; font-style:italic; font-size:28px; color:var(--text-dim);">?</span>
+        <img id="profile-avatar-img" style="display:none; width:100%; height:100%; object-fit:cover;">
+        <div style="position:absolute; inset:0; background:rgba(0,0,0,0.55); color:#fff; font-size:10px; display:flex; align-items:center; justify-content:center; text-align:center; opacity:0; transition:opacity 0.15s;" id="profile-avatar-hint">Cambiar foto</div>
+      </div>
+      <input type="file" id="profile-avatar-input" accept="image/*" style="display:none;">
+    </div>
+    <div class="modal-body">
+      <div class="field">
+        <label>Nombre</label>
+        <input id="profile-name-input" placeholder="ej. Cam Torres">
+      </div>
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-top:6px;">
+        <span style="font-size:13.5px; color:var(--text);">Modo oscuro</span>
+        <label style="position:relative; display:inline-block; width:44px; height:25px;">
+          <input type="checkbox" id="profile-theme-toggle" style="opacity:0; width:0; height:0;">
+          <span id="profile-theme-slider" style="position:absolute; cursor:pointer; inset:0; background:var(--surface-2); border:1px solid var(--line-strong); border-radius:30px; transition:0.15s;"></span>
+        </label>
+      </div>
+    </div>
+    <div class="modal-actions">
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button class="btn-ghost" id="profile-cancel">Cancelar</button>
+        <button class="btn-primary" id="profile-save">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  #profile-avatar-circle:hover #profile-avatar-hint{opacity:1;}
+  #profile-theme-toggle:checked + #profile-theme-slider{background:var(--pink); border-color:var(--pink);}
+  #profile-theme-slider:before{
+    content:""; position:absolute; height:17px; width:17px; left:3px; bottom:3px;
+    background:var(--text-faint); border-radius:50%; transition:0.15s;
+  }
+  #profile-theme-toggle:checked + #profile-theme-slider:before{transform:translateX(19px); background:#fff;}
+</style>
+
+<script>
+const TIER_COLORS = {
+  "Base":"#2E6BFF", "Team Logo":"#2E6BFF", "Contender":"#17C964",
+  "Fans' Favourite":"#17C964", "Master Rookie":"#FFB020", "Icon":"#FFB020",
+  "Golden Baller":"#FF3D8A", "Limited Edition":"#FF3D8A", "Eternos 22":"#FF3B3B", "Otro":"#9A9AA2"
+};
+
+const TEAMS = [
+  "Canadá","México","Estados Unidos",
+  "Australia","Irak","Irán","Japón","Jordania","Corea del Sur","Catar","Arabia Saudita","Uzbekistán",
+  "Argelia","Cabo Verde","RD del Congo","Costa de Marfil","Egipto","Ghana","Marruecos","Senegal","Sudáfrica","Túnez",
+  "Curazao","Haití","Panamá",
+  "Argentina","Brasil","Colombia","Ecuador","Paraguay","Uruguay",
+  "Nueva Zelanda",
+  "Austria","Bélgica","Bosnia y Herzegovina","Croacia","Chequia","Inglaterra","Francia","Alemania","Países Bajos","Noruega","Portugal","Escocia","España","Suecia","Suiza","Turquía"
+];
+
+const EXCHANGE_RATE = 18; // MXN per USD — values stored in MXN, converted for display
+
+let cards = [];
+let currency = "MXN";
+let editingId = null;
+let scanFile = null;
+let scanBase64 = null;
+let scanOriginalDataUrl = null;
+let rawUploadDataUrl = null;
+let cropperInstance = null;
+let pendingCardImage = null;
+let viewMode = "list";
+let activeTab = "collection";
+const STORAGE_KEY = "axl-wc26-collection";
+const TARGET_KEY = "axl-wc26-target";
+
+function populateTeamList(){
+  document.getElementById('team-list').innerHTML = TEAMS.map(t=>`<option value="${t}">`).join('');
+}
+
+async function load(){
+  try{
+    const res = await window.storage.get(STORAGE_KEY);
+    cards = res ? JSON.parse(res.value) : [];
+  }catch(e){ cards = []; }
+  try{
+    const t = await window.storage.get(TARGET_KEY);
+    if(t){ document.getElementById('target-input').value = t.value; }
+  }catch(e){}
+  render();
+}
+
+async function save(){
+  try{ await window.storage.set(STORAGE_KEY, JSON.stringify(cards)); }
+  catch(e){ console.error("Error guardando", e); }
+}
+
+async function saveTarget(val){
+  try{ await window.storage.set(TARGET_KEY, String(val)); }catch(e){}
+}
+
+function fmt(n){
+  const amount = currency === "MXN" ? Number(n) : Number(n) / EXCHANGE_RATE;
+  return (currency === "MXN" ? "$" : "US$") + amount.toLocaleString(undefined,{maximumFractionDigits:2});
+}
+
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+/* ---- Tabs ---- */
+document.getElementById('tab-collection').onclick = ()=>{
+  activeTab = "collection";
+  document.getElementById('tab-collection').classList.add('active');
+  document.getElementById('tab-tracker').classList.remove('active');
+  document.getElementById('view-collection').style.display = 'block';
+  document.getElementById('view-tracker').style.display = 'none';
+};
+document.getElementById('tab-tracker').onclick = ()=>{
+  activeTab = "tracker";
+  document.getElementById('tab-tracker').classList.add('active');
+  document.getElementById('tab-collection').classList.remove('active');
+  document.getElementById('view-collection').style.display = 'none';
+  document.getElementById('view-tracker').style.display = 'block';
+  render();
+};
+
+function renderSegbar(el, byTier, total){
+  el.innerHTML = '';
+  if(total <= 0) return;
+  Object.keys(byTier).forEach(tier=>{
+    const pct = (byTier[tier]/total)*100;
+    if(pct <= 0) return;
+    const s = document.createElement('span');
+    s.style.width = pct+'%';
+    s.style.background = TIER_COLORS[tier] || '#9A9AA2';
+    el.appendChild(s);
+  });
+}
+
+function render(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  const sort = document.getElementById('sort').value;
+
+  let filtered = cards.filter(c=>{
+    if(!q) return true;
+    return (c.player||'').toLowerCase().includes(q) ||
+           (c.team||'').toLowerCase().includes(q) ||
+           (c.num||'').toLowerCase().includes(q);
+  });
+
+  filtered = filtered.slice().sort((a,b)=>{
+    if(sort==="value") return (b.value*b.qty) - (a.value*a.qty);
+    if(sort==="player") return (a.player||'').localeCompare(b.player||'');
+    if(sort==="num") return (parseInt(a.num)||0) - (parseInt(b.num)||0);
+    if(sort==="tier") return (a.tier||'').localeCompare(b.tier||'');
+    return b.addedAt - a.addedAt;
+  });
+
+  const list = document.getElementById('list');
+  const album = document.getElementById('album');
+  list.style.display = viewMode === "list" ? "flex" : "none";
+  album.style.display = viewMode === "album" ? "grid" : "none";
+  list.innerHTML = ""; album.innerHTML = "";
+
+  if(filtered.length === 0){
+    const emptyHtml = `<div class="empty"><b>Aún no hay cartas</b>Agrega tu primera carta con el botón de arriba.</div>`;
+    list.innerHTML = emptyHtml; album.innerHTML = emptyHtml;
+  } else {
+    filtered.forEach(c=>{
+      const color = TIER_COLORS[c.tier] || "#2E6BFF";
+
+      const row = document.createElement('div');
+      row.className = "row";
+      row.innerHTML = `
+        <div class="tier-dot" style="--tier-color:${color}; background:${color};"></div>
+        <div class="num">${c.num ? '#'+c.num : '—'}</div>
+        <div class="info">
+          <div class="player">${escapeHtml(c.player || 'Sin nombre')}</div>
+          <div class="meta">${escapeHtml(c.tier)} · ${escapeHtml(c.team||'')} · ${escapeHtml(c.cond)}</div>
+        </div>
+        <div class="value-block">
+          <div class="val">${fmt(c.value*c.qty)}</div>
+          <div class="qty">×${c.qty}</div>
+        </div>
+      `;
+      row.onclick = ()=>openModal(c.id);
+      list.appendChild(row);
+
+      const tile = document.createElement('div');
+      tile.className = "album-tile";
+      tile.style.setProperty('--tier-color', color);
+      tile.innerHTML = `
+        <div class="thumb">
+          ${c.image ? `<img src="${c.image}" alt="${escapeHtml(c.player)}">` : `<div class="placeholder">${c.num ? '#'+c.num : '—'}<br>sin foto</div>`}
+        </div>
+        <div class="cap">
+          <div class="player">${escapeHtml(c.player || 'Sin nombre')}</div>
+          <div class="meta">${escapeHtml(c.team||'')} · ${fmt(c.value*c.qty)}</div>
+        </div>
+      `;
+      tile.onclick = ()=>openModal(c.id);
+      album.appendChild(tile);
+    });
+  }
+
+  const trackerList = document.getElementById('tracker-list');
+  const trackerSorted = cards.slice().sort((a,b)=>(b.value*b.qty)-(a.value*a.qty));
+  if(trackerSorted.length === 0){
+    trackerList.innerHTML = `<div class="empty"><b>Sin datos todavía</b>Agrega cartas con un valor para verlas aquí.</div>`;
+  } else {
+    trackerList.innerHTML = trackerSorted.map(c=>{
+      const color = TIER_COLORS[c.tier] || "#2E6BFF";
+      return `<div class="tracker-row">
+        <div class="tier-dot" style="background:${color};"></div>
+        <div class="name">${escapeHtml(c.player||'Sin nombre')} <small>${escapeHtml(c.team||'')}${c.qty>1 ? ' · ×'+c.qty : ''}</small></div>
+        <div class="amt">${fmt(c.value*c.qty)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  const uniqueOwned = cards.length;
+  const totalPieces = cards.reduce((s,c)=>s+Number(c.qty||0),0);
+  const totalValue = cards.reduce((s,c)=>s+Number(c.value||0)*Number(c.qty||0),0);
+  const byTier = {};
+  cards.forEach(c=>{ byTier[c.tier] = (byTier[c.tier]||0) + Number(c.value||0)*Number(c.qty||0); });
+
+  document.getElementById('stat-owned').textContent = uniqueOwned;
+  document.getElementById('stat-total').textContent = totalPieces;
+  document.getElementById('hero-value').innerHTML = `${fmt(totalValue)}<sup id="cur-label">${currency}</sup>`;
+  document.getElementById('hero-value-2').innerHTML = `${fmt(totalValue)}<sup>${currency}</sup>`;
+  renderSegbar(document.getElementById('segbar'), byTier, totalValue);
+  renderSegbar(document.getElementById('segbar-2'), byTier, totalValue);
+}
+
+document.getElementById('search').oninput = render;
+document.getElementById('sort').onchange = render;
+document.getElementById('currency-toggle').onclick = ()=>{ currency = currency==="MXN" ? "USD" : "MXN"; render(); };
+document.getElementById('target-input').onchange = (e)=>{
+  const v = Number(e.target.value)||0;
+  saveTarget(v);
+  render();
+};
+document.getElementById('view-list').onclick = ()=>{
+  viewMode = "list";
+  document.getElementById('view-list').classList.add('active');
+  document.getElementById('view-album').classList.remove('active');
+  render();
+};
+document.getElementById('view-album').onclick = ()=>{
+  viewMode = "album";
+  document.getElementById('view-album').classList.add('active');
+  document.getElementById('view-list').classList.remove('active');
+  render();
+};
+
+function exportCSV(){
+  const header = ["numero","jugador","equipo","nivel","condicion","cantidad","valor_unitario","valor_total","notas"];
+  const rows = cards.map(c=>[c.num,c.player,c.team,c.tier,c.cond,c.qty,c.value,(c.value*c.qty).toFixed(2),c.notes]);
+  const csv = [header, ...rows].map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'coleccion-axl-wc26.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+document.getElementById('export-btn').onclick = exportCSV;
+
+function openModal(id){
+  const overlay = document.getElementById('modal-overlay');
+  const c = id ? cards.find(x=>x.id===id) : null;
+  editingId = c ? c.id : null;
+  pendingCardImage = c ? (c.image || null) : null;
+
+  const imgWrap = document.getElementById('modal-image');
+  const color = TIER_COLORS[c ? c.tier : 'Base'] || '#2E6BFF';
+  imgWrap.style.setProperty('--tier-color', color);
+  imgWrap.innerHTML = (c && c.image) ? `<img src="${c.image}" alt="">` : `<span class="placeholder">sin foto</span>`;
+
+  if(c){
+    showViewMode(c);
+  } else {
+    showEditMode(null);
+  }
+  overlay.classList.add('open');
+}
+
+function showViewMode(c){
+  document.getElementById('modal-label').textContent = 'Carta';
+  document.getElementById('view-mode-body').style.display = 'block';
+  document.getElementById('edit-mode-body').style.display = 'none';
+
+  const color = TIER_COLORS[c.tier] || '#2E6BFF';
+  document.getElementById('view-player').textContent = c.player || 'Sin nombre';
+  const badge = document.getElementById('view-tier-badge');
+  badge.textContent = c.tier || '';
+  badge.style.color = color;
+  document.getElementById('view-team').textContent = c.team || '—';
+  document.getElementById('view-num').textContent = c.num ? '#'+c.num : '—';
+  document.getElementById('view-cond').textContent = c.cond || '—';
+  document.getElementById('view-qty').textContent = '×' + (c.qty || 1);
+  document.getElementById('view-value').textContent = fmt(c.value * c.qty);
+  document.getElementById('view-value').style.color = color;
+  const notesWrap = document.getElementById('view-notes-wrap');
+  if(c.notes){ notesWrap.style.display = 'block'; document.getElementById('view-notes').textContent = c.notes; }
+  else { notesWrap.style.display = 'none'; }
+}
+
+function showEditMode(c){
+  document.getElementById('modal-label').textContent = c ? 'Editar carta' : 'Nueva carta';
+  document.getElementById('view-mode-body').style.display = 'none';
+  document.getElementById('edit-mode-body').style.display = 'block';
+  document.getElementById('modal-delete').style.display = c ? 'inline-block' : 'none';
+  document.getElementById('ai-disclaimer').style.display = 'none';
+
+  document.getElementById('f-num').value = c ? (c.num||'') : '';
+  document.getElementById('f-player').value = c ? (c.player||'') : '';
+  document.getElementById('f-team').value = c ? (c.team||'') : '';
+  document.getElementById('f-tier').value = c ? (c.tier||'Base') : 'Base';
+  document.getElementById('f-cond').value = c ? (c.cond||'Mint') : 'Mint';
+  document.getElementById('f-qty').value = c ? (c.qty||1) : 1;
+  document.getElementById('f-value').value = c ? (c.value||0) : '';
+  document.getElementById('f-notes').value = c ? (c.notes||'') : '';
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('open');
+  editingId = null;
+  pendingCardImage = null;
+}
+document.getElementById('modal-close').onclick = closeModal;
+document.getElementById('modal-cancel').onclick = ()=>{
+  const c = editingId ? cards.find(x=>x.id===editingId) : null;
+  if(c){ showViewMode(c); } else { closeModal(); }
+};
+document.getElementById('view-close').onclick = closeModal;
+document.getElementById('modal-overlay').onclick = (e)=>{ if(e.target.id === 'modal-overlay') closeModal(); };
+
+document.getElementById('view-edit').onclick = ()=>{
+  const c = cards.find(x=>x.id===editingId);
+  showEditMode(c || null);
+};
+
+document.getElementById('view-delete').onclick = async ()=>{
+  if(!editingId) return;
+  cards = cards.filter(c=>c.id!==editingId);
+  await save();
+  closeModal();
+  render();
+};
+
+document.getElementById('add-toggle').onclick = ()=>{
+  closeScanPanel();
+  openModal(null);
+};
+
+document.getElementById('modal-save').onclick = async ()=>{
+  const player = document.getElementById('f-player').value.trim();
+  if(!player){ document.getElementById('f-player').focus(); return; }
+  const data = {
+    id: editingId || (Date.now()+Math.random().toString(36).slice(2)),
+    num: document.getElementById('f-num').value.trim(),
+    player,
+    team: document.getElementById('f-team').value.trim(),
+    tier: document.getElementById('f-tier').value,
+    cond: document.getElementById('f-cond').value,
+    qty: Number(document.getElementById('f-qty').value) || 1,
+    value: Number(document.getElementById('f-value').value) || 0,
+    notes: document.getElementById('f-notes').value.trim(),
+    image: pendingCardImage || (editingId ? (cards.find(c=>c.id===editingId)?.image || null) : null),
+    addedAt: editingId ? (cards.find(c=>c.id===editingId)?.addedAt || Date.now()) : Date.now()
+  };
+  if(editingId){
+    cards = cards.map(c=>c.id===editingId ? data : c);
+  } else {
+    cards.push(data);
+  }
+  await save();
+  closeModal();
+  render();
+};
+
+document.getElementById('modal-delete').onclick = async ()=>{
+  if(!editingId) return;
+  cards = cards.filter(c=>c.id!==editingId);
+  await save();
+  closeModal();
+  render();
+};
+
+function closeScanPanel(){
+  document.getElementById('scan-panel').classList.remove('open');
+  document.getElementById('scan-preview-wrap').innerHTML = '';
+  document.getElementById('scan-input').value = '';
+  document.getElementById('scan-status').textContent = '';
+  document.getElementById('scan-status').className = 'scan-status';
+  document.getElementById('scan-analyze').disabled = true;
+  document.getElementById('scan-skip-ai').disabled = true;
+  document.getElementById('bg-remove-panel').style.display = 'none';
+  document.getElementById('bg-remove-enable').checked = false;
+  document.getElementById('bg-remove-threshold').disabled = true;
+  document.getElementById('redo-crop').style.display = 'none';
+  destroyCropper();
+  document.getElementById('crop-stage').style.display = 'none';
+  scanFile = null; scanBase64 = null; scanOriginalDataUrl = null; rawUploadDataUrl = null;
+}
+
+document.getElementById('scan-toggle').onclick = ()=>{
+  closeModal();
+  const panel = document.getElementById('scan-panel');
+  panel.classList.contains('open') ? closeScanPanel() : panel.classList.add('open');
+};
+document.getElementById('scan-cancel').onclick = closeScanPanel;
+
+document.getElementById('scan-input').onchange = async (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  scanFile = file;
+  const dataUrl = await resizeImage(file, 1200);
+  rawUploadDataUrl = dataUrl;
+  document.getElementById('scan-preview-wrap').innerHTML = '';
+  document.getElementById('bg-remove-panel').style.display = 'none';
+  document.getElementById('scan-analyze').disabled = true;
+  document.getElementById('scan-skip-ai').disabled = true;
+  document.getElementById('redo-crop').style.display = 'none';
+  openCropStage(dataUrl);
+};
+
+function destroyCropper(){ if(cropperInstance){ cropperInstance.destroy(); cropperInstance = null; } }
+
+function openCropStage(dataUrl){
+  destroyCropper();
+  const target = document.getElementById('crop-target');
+  target.onload = ()=>{
+    cropperInstance = new Cropper(target, { viewMode:1, autoCropArea:0.85, background:false, guides:true, responsive:true, dragMode:'move' });
+  };
+  target.src = '';
+  document.getElementById('crop-stage').style.display = 'block';
+  requestAnimationFrame(()=>{ target.src = dataUrl; });
+}
+
+function finishCrop(dataUrl){
+  document.getElementById('crop-stage').style.display = 'none';
+  destroyCropper();
+  scanOriginalDataUrl = dataUrl;
+  scanBase64 = dataUrl.split(',')[1];
+  renderScanPreview(dataUrl);
+  document.getElementById('scan-analyze').disabled = false;
+  document.getElementById('scan-skip-ai').disabled = false;
+  document.getElementById('bg-remove-panel').style.display = 'block';
+  document.getElementById('redo-crop').style.display = 'inline-block';
+}
+
+document.getElementById('crop-apply').onclick = ()=>{
+  if(!cropperInstance) return;
+  const canvas = cropperInstance.getCroppedCanvas({ maxWidth:1000, maxHeight:1000 });
+  finishCrop(canvas.toDataURL('image/jpeg', 0.88));
+};
+document.getElementById('crop-skip').onclick = ()=>{ finishCrop(rawUploadDataUrl); };
+document.getElementById('redo-crop').onclick = ()=>{
+  document.getElementById('scan-preview-wrap').innerHTML = '';
+  document.getElementById('bg-remove-panel').style.display = 'none';
+  document.getElementById('bg-remove-enable').checked = false;
+  document.getElementById('redo-crop').style.display = 'none';
+  openCropStage(rawUploadDataUrl);
+};
+
+function renderScanPreview(dataUrl){
+  document.getElementById('scan-preview-wrap').innerHTML =
+    `<div class="checker" style="padding:0;"><img id="scan-preview-img" src="${dataUrl}" alt="preview" style="display:block; max-width:220px; max-height:280px; border-radius:9px;"></div>`;
+}
+
+function resizeImage(file, maxDim){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onload = ()=>{
+      const img = new Image();
+      img.onload = ()=>{
+        let w = img.width, h = img.height;
+        if(w > h && w > maxDim){ h = Math.round(h*maxDim/w); w = maxDim; }
+        else if(h > maxDim){ w = Math.round(w*maxDim/h); h = maxDim; }
+        const canvas = document.createElement('canvas');
+        canvas.width = w; canvas.height = h;
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+        resolve(canvas.toDataURL('image/jpeg', 0.85));
+      };
+      img.onerror = reject;
+      img.src = reader.result;
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+
+function removeBackground(dataUrl, tolerance){
+  return new Promise((resolve)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width; canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const d = imgData.data;
+      const w = canvas.width, h = canvas.height;
+      const n = w*h;
+
+      const masked = new Uint8Array(n);
+      const queued = new Uint8Array(n);
+      const stack = new Int32Array(n);
+      let sp = 0;
+
+      function px(i){ const o=i*4; return [d[o], d[o+1], d[o+2]]; }
+      function dist(a,b){ const dr=a[0]-b[0], dg=a[1]-b[1], db=a[2]-b[2]; return Math.sqrt(dr*dr+dg*dg+db*db); }
+
+      for(let x=0; x<w; x++){ stack[sp++]=x; queued[x]=1; stack[sp++]=(h-1)*w+x; queued[(h-1)*w+x]=1; }
+      for(let y=0; y<h; y++){ stack[sp++]=y*w; queued[y*w]=1; stack[sp++]=y*w+(w-1); queued[y*w+(w-1)]=1; }
+
+      while(sp > 0){
+        const i = stack[--sp];
+        masked[i] = 1;
+        const cx = i % w, cy = (i - cx) / w;
+        const c = px(i);
+        const neighbors = [];
+        if(cx > 0) neighbors.push(i-1);
+        if(cx < w-1) neighbors.push(i+1);
+        if(cy > 0) neighbors.push(i-w);
+        if(cy < h-1) neighbors.push(i+w);
+        for(const j of neighbors){
+          if(queued[j]) continue;
+          if(dist(c, px(j)) <= tolerance){ queued[j]=1; stack[sp++]=j; }
+        }
+      }
+
+      for(let i=0; i<n; i++){
+        const o = i*4;
+        if(!masked[i]) continue;
+        const cx = i % w, cy = (i - cx) / w;
+        let unmaskedNeighbors = 0, total = 0;
+        for(let ddy=-1; ddy<=1; ddy++){
+          for(let ddx=-1; ddx<=1; ddx++){
+            const nx=cx+ddx, ny=cy+ddy;
+            if(nx<0||ny<0||nx>=w||ny>=h) continue;
+            total++;
+            if(!masked[ny*w+nx]) unmaskedNeighbors++;
+          }
+        }
+        d[o+3] = total ? Math.round(255 * (unmaskedNeighbors/total)) : 0;
+      }
+      ctx.putImageData(imgData, 0, 0);
+      resolve(canvas.toDataURL('image/png'));
+    };
+    img.src = dataUrl;
+  });
+}
+
+async function updateBgPreview(){
+  const enabled = document.getElementById('bg-remove-enable').checked;
+  if(!enabled || !scanOriginalDataUrl){ renderScanPreview(scanOriginalDataUrl); return; }
+  const wrap = document.getElementById('scan-preview-wrap');
+  wrap.style.opacity = '0.5';
+  const threshold = Number(document.getElementById('bg-remove-threshold').value);
+  const processed = await removeBackground(scanOriginalDataUrl, threshold);
+  renderScanPreview(processed);
+  wrap.style.opacity = '1';
+}
+let bgPreviewTimer = null;
+function scheduleBgPreview(){ clearTimeout(bgPreviewTimer); bgPreviewTimer = setTimeout(updateBgPreview, 180); }
+document.getElementById('bg-remove-enable').onchange = (e)=>{
+  document.getElementById('bg-remove-threshold').disabled = !e.target.checked;
+  updateBgPreview();
+};
+document.getElementById('bg-remove-threshold').oninput = scheduleBgPreview;
+
+async function buildStoredThumbnail(){
+  const bgOn = document.getElementById('bg-remove-enable').checked;
+  const threshold = Number(document.getElementById('bg-remove-threshold').value);
+  const sourceUrl = bgOn ? await removeBackground(scanOriginalDataUrl, threshold) : scanOriginalDataUrl;
+  return new Promise((resolve)=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const maxDim = 260;
+      let w = img.width, h = img.height;
+      if(w > h && w > maxDim){ h = Math.round(h*maxDim/w); w = maxDim; }
+      else if(h > maxDim){ w = Math.round(w*maxDim/h); h = maxDim; }
+      const canvas = document.createElement('canvas');
+      canvas.width = w; canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      resolve(canvas.toDataURL(bgOn ? 'image/png' : 'image/jpeg', 0.75));
+    };
+    img.src = sourceUrl;
+  });
+}
+
+document.getElementById('scan-skip-ai').onclick = async ()=>{
+  if(!scanOriginalDataUrl) return;
+  pendingCardImage = await buildStoredThumbnail();
+  closeScanPanel();
+  openModal(null);
+};
+
+document.getElementById('scan-analyze').onclick = async ()=>{
+  if(!scanBase64) return;
+  const statusEl = document.getElementById('scan-status');
+  const btn = document.getElementById('scan-analyze');
+  btn.disabled = true;
+  statusEl.className = 'scan-status';
+  statusEl.innerHTML = `<span class="spinner"></span>Analizando carta…`;
+
+
+
+  const prompt = `Estás viendo la foto de una carta física Panini Adrenalyn XL FIFA World Cup 2026. Identifica lo que puedas y responde SOLO con un objeto JSON, sin texto adicional, sin backticks, con esta forma exacta:
+{
+  "number": "número de carta si es visible, texto vacío si no",
+  "player": "nombre del jugador tal como aparece en la carta",
+  "team": "selección nacional del jugador",
+  "tier": "una de estas opciones exactas: Base, Team Logo, Contender, Fans' Favourite, Master Rookie, Icon, Golden Baller, Limited Edition, Eternos 22, Otro",
+  "condition_guess": "una de estas opciones exactas según el estado visual de la carta: Mint, NM, EX, Jugada",
+  "estimated_value_low": número en USD (estimación aproximada, 0 si no tienes idea),
+  "estimated_value_high": número en USD (estimación aproximada),
+  "confidence": "alta, media o baja",
+  "notes": "cualquier duda sobre la identificación, en una frase corta"
+}
+Si no puedes leer algún campo con confianza, dejalo como texto vacío o 0, y bájalo en "confidence". No inventes datos.`;
+
+  try{
+    const response = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-6",
+        max_tokens: 1000,
+        messages: [{
+          role: "user",
+          content: [
+            { type: "image", source: { type: "base64", media_type: "image/jpeg", data: scanBase64 } },
+            { type: "text", text: prompt }
+          ]
+        }]
+      })
+    });
+    const data = await response.json();
+    const textBlock = (data.content || []).find(b=>b.type==="text");
+    if(!textBlock) throw new Error("Sin respuesta de texto");
+    let clean = textBlock.text.trim().replace(/^```json/,'').replace(/^```/,'').replace(/```$/,'').trim();
+    const result = JSON.parse(clean);
+
+    pendingCardImage = await buildStoredThumbnail();
+    closeScanPanel();
+    openModal(null);
+
+    document.getElementById('f-num').value = result.number || '';
+    document.getElementById('f-player').value = result.player || '';
+    document.getElementById('f-team').value = result.team || '';
+    document.getElementById('f-tier').value = ['Base','Team Logo','Contender',"Fans' Favourite",'Master Rookie','Icon','Golden Baller','Limited Edition','Eternos 22'].includes(result.tier) ? result.tier : 'Otro';
+    document.getElementById('f-cond').value = ['Mint','NM','EX','Jugada'].includes(result.condition_guess) ? result.condition_guess : 'Mint';
+    document.getElementById('f-qty').value = 1;
+    const midUsd = result.estimated_value_low != null && result.estimated_value_high != null
+      ? ((Number(result.estimated_value_low)+Number(result.estimated_value_high))/2) : 0;
+    const midMxn = midUsd * EXCHANGE_RATE;
+    document.getElementById('f-value').value = midMxn ? midMxn.toFixed(2) : '';
+    let noteBits = [];
+    if(result.estimated_value_low != null && result.estimated_value_high != null){
+      const lowMxn = (Number(result.estimated_value_low)*EXCHANGE_RATE).toFixed(0);
+      const highMxn = (Number(result.estimated_value_high)*EXCHANGE_RATE).toFixed(0);
+      noteBits.push(`Costo: $${result.estimated_value_low}–$${result.estimated_value_high} USD (~$${lowMxn}–$${highMxn} MXN). Fuente: estimación de IA a partir de la foto — verificar en SportsCardsPro, CardPulse o Coleka.`);
+    }
+    document.getElementById('f-notes').value = noteBits.join(' · ');
+    document.getElementById('ai-disclaimer').style.display = 'block';
+    const imgWrap = document.getElementById('modal-image');
+    imgWrap.style.setProperty('--tier-color', TIER_COLORS[document.getElementById('f-tier').value] || '#2E6BFF');
+    imgWrap.innerHTML = pendingCardImage ? `<img src="${pendingCardImage}" alt="">` : `<span class="placeholder">sin foto</span>`;
+  }catch(err){
+    console.error(err);
+    statusEl.className = 'scan-status err';
+    statusEl.textContent = 'No se pudo leer la carta. Intenta con mejor luz o agrega manualmente.';
+    btn.disabled = false;
+  }
+};
+
+const PROFILE_KEY = 'axl-wc26-profile';
+let localProfile = { name: '', avatar: null, theme: 'dark' };
+
+function profileInitials(){
+  const src = (localProfile.name || '').trim();
+  const parts = src.split(/\s+/).filter(Boolean);
+  if(parts.length >= 2) return (parts[0][0] + parts[1][0]).toUpperCase();
+  if(parts.length === 1) return parts[0].slice(0,2).toUpperCase();
+  return '?';
+}
+
+function renderNavAvatar(){
+  const initEl = document.getElementById('nav-avatar-initials');
+  const imgEl = document.getElementById('nav-avatar-img');
+  if(localProfile.avatar){
+    imgEl.src = localProfile.avatar; imgEl.style.display = 'block'; initEl.style.display = 'none';
+  } else {
+    imgEl.style.display = 'none'; initEl.style.display = 'block';
+    initEl.textContent = profileInitials();
+  }
+}
+
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  document.getElementById('theme-toggle-btn').textContent = theme === 'light' ? '☀️' : '🌙';
+}
+
+async function initTheme(){
+  try{
+    const res = await window.storage.get(PROFILE_KEY);
+    if(res) localProfile = { ...localProfile, ...JSON.parse(res.value) };
+  }catch(e){}
+  applyTheme(localProfile.theme || 'dark');
+  renderNavAvatar();
+}
+
+async function saveProfile(){
+  try{ await window.storage.set(PROFILE_KEY, JSON.stringify(localProfile)); }catch(e){}
+}
+
+document.getElementById('theme-toggle-btn').onclick = async ()=>{
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  localProfile.theme = isLight ? 'dark' : 'light';
+  applyTheme(localProfile.theme);
+  await saveProfile();
+};
+
+/* ---- Profile modal ---- */
+let pendingAvatar = null;
+
+function openProfileModal(){
+  document.getElementById('profile-name-input').value = localProfile.name || '';
+  pendingAvatar = localProfile.avatar || null;
+  updateProfileModalAvatar();
+  document.getElementById('profile-theme-toggle').checked = localProfile.theme === 'dark' || !localProfile.theme;
+  document.getElementById('profile-modal-overlay').classList.add('open');
+}
+function closeProfileModal(){
+  document.getElementById('profile-modal-overlay').classList.remove('open');
+}
+function updateProfileModalAvatar(){
+  const initEl = document.getElementById('profile-avatar-initials');
+  const imgEl = document.getElementById('profile-avatar-img');
+  if(pendingAvatar){
+    imgEl.src = pendingAvatar; imgEl.style.display = 'block'; initEl.style.display = 'none';
+  } else {
+    imgEl.style.display = 'none'; initEl.style.display = 'block';
+    initEl.textContent = profileInitials();
+  }
+}
+
+document.getElementById('nav-avatar-btn').onclick = openProfileModal;
+document.getElementById('profile-modal-close').onclick = closeProfileModal;
+document.getElementById('profile-cancel').onclick = closeProfileModal;
+document.getElementById('profile-modal-overlay').onclick = (e)=>{ if(e.target.id==='profile-modal-overlay') closeProfileModal(); };
+
+document.getElementById('profile-avatar-circle').onclick = ()=>{
+  document.getElementById('profile-avatar-input').click();
+};
+document.getElementById('profile-avatar-input').onchange = (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    const img = new Image();
+    img.onload = ()=>{
+      const size = 200;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const minDim = Math.min(img.width, img.height);
+      const sx = (img.width - minDim) / 2, sy = (img.height - minDim) / 2;
+      ctx.drawImage(img, sx, sy, minDim, minDim, 0, 0, size, size);
+      pendingAvatar = canvas.toDataURL('image/jpeg', 0.85);
+      updateProfileModalAvatar();
+    };
+    img.src = reader.result;
+  };
+  reader.readAsDataURL(file);
+};
+
+document.getElementById('profile-save').onclick = async ()=>{
+  localProfile.name = document.getElementById('profile-name-input').value.trim();
+  localProfile.avatar = pendingAvatar;
+  localProfile.theme = document.getElementById('profile-theme-toggle').checked ? 'dark' : 'light';
+  applyTheme(localProfile.theme);
+  renderNavAvatar();
+  await saveProfile();
+  closeProfileModal();
+};
+
+initTheme();
+
+populateTeamList();
+load();
+</script>
+</body>
+</html>
